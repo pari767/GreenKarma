@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenKarma – Wallet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#0d1f35;min-height:100vh;color:#fff;padding-bottom:90px;}
+
+    /* NAV */
+    .navbar{background:rgba(10,38,64,0.95);backdrop-filter:blur(12px);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .nav-logo-icon{width:32px;height:32px;background:#02C39A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+    .nav-logo-text{color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.4px;}
+    .nav-logo-text span{color:#02C39A;}
+    .nav-credits{background:rgba(2,195,154,0.12);border:1px solid rgba(2,195,154,0.25);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:#02C39A;}
+    .nav-avatar{width:34px;height:34px;background:linear-gradient(135deg,#028090,#02C39A);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
+
+    .page{max-width:560px;margin:0 auto;padding:24px 16px;}
+
+    /* WALLET HERO CARD */
+    .wallet-card{
+      background:linear-gradient(135deg,#0f3460 0%,#0A2640 60%,#012a1e 100%);
+      border:1px solid rgba(2,195,154,0.2);
+      border-radius:24px;padding:28px;margin-bottom:20px;
+      position:relative;overflow:hidden;
+    }
+    .wallet-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(2,195,154,0.07);border-radius:50%;}
+    .wallet-card::after{content:'';position:absolute;bottom:-60px;left:-20px;width:200px;height:200px;background:rgba(2,144,144,0.05);border-radius:50%;}
+    .wc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;position:relative;z-index:1;}
+    .wc-label{color:#9ECFCC;font-size:12px;font-weight:600;letter-spacing:0.5px;margin-bottom:4px;}
+    .wc-name{color:#fff;font-size:15px;font-weight:700;}
+    .wc-badge{background:rgba(2,195,154,0.15);border:1px solid rgba(2,195,154,0.3);border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;color:#02C39A;}
+    .wc-balance{text-align:center;margin-bottom:24px;position:relative;z-index:1;}
+    .wc-bal-num{font-size:72px;font-weight:900;color:#02C39A;letter-spacing:-3px;line-height:1;}
+    .wc-bal-lbl{color:#9ECFCC;font-size:14px;margin-top:6px;}
+    .wc-bal-rupee{color:#64748B;font-size:13px;margin-top:4px;}
+    .wc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;position:relative;z-index:1;}
+    .wcs-item{background:#0A2640;padding:14px;text-align:center;}
+    .wcs-val{font-size:18px;font-weight:800;color:#fff;}
+    .wcs-lbl{font-size:10px;color:#64748B;margin-top:3px;}
+
+    /* MINI STATS ROW */
+    .mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+    .mini-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;}
+    .mini-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .ic-green{background:rgba(2,195,154,0.15);}
+    .ic-blue{background:rgba(2,128,144,0.15);}
+    .mini-val{font-size:20px;font-weight:800;color:#fff;}
+    .mini-lbl{font-size:11px;color:#64748B;margin-top:2px;}
+
+    /* CO2 METER */
+    .co2-meter{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:20px;margin-bottom:20px;}
+    .cm-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+    .cm-sub{font-size:12px;color:#64748B;margin-bottom:16px;}
+    .cm-bar-wrap{background:rgba(255,255,255,0.06);border-radius:99px;height:12px;overflow:hidden;margin-bottom:8px;}
+    .cm-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#028090,#02C39A);transition:width 1.2s ease;}
+    .cm-labels{display:flex;justify-content:space-between;font-size:11px;color:#64748B;}
+    .cm-goal{color:#02C39A;font-weight:600;}
+
+    /* QUICK ACTIONS */
+    .quick-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+    .quick-action{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;text-align:center;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+    .quick-action:hover{background:rgba(2,195,154,0.08);border-color:rgba(2,195,154,0.3);transform:translateY(-2px);}
+    .qa-icon{font-size:28px;margin-bottom:8px;}
+    .qa-title{font-size:13px;font-weight:700;color:#fff;}
+    .qa-sub{font-size:11px;color:#64748B;margin-top:3px;}
+
+    /* SECTION HEADER */
+    .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+    .section-title{font-size:16px;font-weight:800;letter-spacing:-0.3px;}
+    .section-badge{background:rgba(2,195,154,0.1);border:1px solid rgba(2,195,154,0.2);border-radius:99px;padding:3px 10px;font-size:11px;color:#02C39A;font-weight:600;}
+
+    /* FILTER TABS */
+    .filter-tabs{display:flex;gap:8px;margin-bottom:16px;}
+    .ftab{padding:6px 16px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);color:#64748B;background:transparent;font-family:'Inter',sans-serif;transition:all 0.2s;}
+    .ftab.active{background:rgba(2,195,154,0.12);border-color:rgba(2,195,154,0.3);color:#02C39A;}
+
+    /* TRANSACTION LIST */
+    .tx-list{display:flex;flex-direction:column;gap:10px;}
+    .tx-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:background 0.2s;}
+    .tx-item:hover{background:rgba(255,255,255,0.07);}
+    .tx-icon-wrap{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .ic-earn{background:rgba(2,195,154,0.12);}
+    .ic-spend{background:rgba(217,119,6,0.12);}
+    .tx-info{flex:1;}
+    .tx-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px;}
+    .tx-date{font-size:11px;color:#64748B;}
+    .tx-right{text-align:right;}
+    .tx-amt{font-size:15px;font-weight:800;}
+    .tx-amt.earn{color:#02C39A;}
+    .tx-amt.spend{color:#D97706;}
+    .tx-km{font-size:10px;color:#64748B;margin-top:2px;}
+
+    /* EMPTY STATES */
+    .empty-state{text-align:center;padding:40px 20px;color:#64748B;}
+    .empty-state .e-icon{font-size:52px;margin-bottom:14px;}
+    .empty-state .e-title{font-size:16px;font-weight:700;color:#9ECFCC;margin-bottom:6px;}
+    .empty-state .e-desc{font-size:13px;line-height:1.6;margin-bottom:20px;}
+    .empty-cta{display:inline-block;background:#02C39A;color:#0A2640;font-size:14px;font-weight:800;padding:12px 24px;border-radius:12px;text-decoration:none;transition:opacity 0.2s;}
+    .empty-cta:hover{opacity:0.9;}
+
+    /* FIRST TRIP NUDGE */
+    .first-trip-nudge{background:rgba(2,195,154,0.06);border:1px dashed rgba(2,195,154,0.3);border-radius:20px;padding:24px;text-align:center;margin-bottom:20px;}
+    .ftn-icon{font-size:40px;margin-bottom:10px;}
+    .ftn-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;}
+    .ftn-desc{font-size:12px;color:#64748B;line-height:1.6;margin-bottom:16px;}
+    .ftn-btn{display:inline-block;background:linear-gradient(135deg,#028090,#02C39A);color:#0A2640;font-size:14px;font-weight:800;padding:12px 28px;border-radius:12px;text-decoration:none;}
+
+    /* BOTTOM NAV */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,38,64,0.97);border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:50;backdrop-filter:blur(12px);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#64748B;text-decoration:none;padding:4px 12px;border-radius:12px;transition:color 0.2s;}
+    .bn-item .bn-icon{font-size:22px;}
+    .bn-item.active,.bn-item:hover{color:#02C39A;}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="nav-logo" href="../index.html">
+      <div class="nav-logo-icon">🌿</div>
+      <div class="nav-logo-text">Green<span>Karma</span></div>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="nav-credits" id="navCredits">⚡ 0 credits</div>
+      <div class="nav-avatar" id="navAvatar" title="Sign out" onclick="confirmLogout()">?</div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- WALLET CARD — all values injected by JS -->
+    <div class="wallet-card">
+      <div class="wc-top">
+        <div>
+          <div class="wc-label">CARBON WALLET</div>
+          <div class="wc-name" id="walletName">–</div>
+        </div>
+        <div class="wc-badge" id="ecoLevel">🌱 Eco Level 1</div>
+      </div>
+      <div class="wc-balance">
+        <div class="wc-bal-num" id="balNum">0.0</div>
+        <div class="wc-bal-lbl">Carbon Credits</div>
+        <div class="wc-bal-rupee" id="balRupee">Log a trip to start earning</div>
+      </div>
+      <div class="wc-stats">
+        <div class="wcs-item">
+          <div class="wcs-val" id="statTrips">0</div>
+          <div class="wcs-lbl">Total trips</div>
+        </div>
+        <div class="wcs-item">
+          <div class="wcs-val" id="statCo2">0 kg</div>
+          <div class="wcs-lbl">CO₂ saved</div>
+        </div>
+        <div class="wcs-item">
+          <div class="wcs-val" id="statCity">–</div>
+          <div class="wcs-lbl">City</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRST TRIP NUDGE — only shown when trips = 0 -->
+    <div class="first-trip-nudge" id="firstTripNudge" style="display:none;">
+      <div class="ftn-icon">🚌</div>
+      <div class="ftn-title">You haven't logged a trip yet!</div>
+      <div class="ftn-desc">Start your first GPS-verified trip to earn carbon credits. Every km on public transport or cycle counts.</div>
+      <a class="ftn-btn" href="trip.html">Start My First Trip →</a>
+    </div>
+
+    <!-- MINI STATS — shown only when trips > 0 -->
+    <div class="mini-stats" id="miniStats" style="display:none;">
+      <div class="mini-card">
+        <div class="mini-icon ic-green">🌱</div>
+        <div>
+          <div class="mini-val" id="earnedTotal">0.0</div>
+          <div class="mini-lbl">Credits earned</div>
+        </div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon ic-blue">🎁</div>
+        <div>
+          <div class="mini-val" id="spentTotal">0.0</div>
+          <div class="mini-lbl">Credits redeemed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CO2 METER — shown only when trips > 0 -->
+    <div class="co2-meter" id="co2MeterCard" style="display:none;">
+      <div class="cm-title">🌍 Monthly CO₂ Goal</div>
+      <div class="cm-sub" id="co2Sub">You've saved 0 kg this month · Goal: 10 kg</div>
+      <div class="cm-bar-wrap">
+        <div class="cm-bar" id="co2Bar" style="width:0%"></div>
+      </div>
+      <div class="cm-labels">
+        <span>0 kg</span>
+        <span class="cm-goal" id="co2Pct">0% achieved</span>
+        <span>10 kg</span>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-row">
+      <a class="quick-action" href="trip.html">
+        <div class="qa-icon">🚌</div>
+        <div class="qa-title">New Trip</div>
+        <div class="qa-sub">Earn more credits</div>
+      </a>
+      <a class="quick-action" href="redeem.html">
+        <div class="qa-icon">🎁</div>
+        <div class="qa-title">Redeem</div>
+        <div class="qa-sub">Spend your credits</div>
+      </a>
+    </div>
+
+    <!-- TRANSACTION HISTORY -->
+    <div class="section-hdr">
+      <div class="section-title">Transaction History</div>
+      <div class="section-badge" id="txCount">0 transactions</div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="filterTx('all',this)">All</button>
+      <button class="ftab" onclick="filterTx('earn',this)">Earned 🌿</button>
+      <button class="ftab" onclick="filterTx('spend',this)">Redeemed 🎁</button>
+    </div>
+
+    <div class="tx-list" id="txList"></div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <a class="bn-item" href="trip.html"><span class="bn-icon">🚌</span>Trip</a>
+    <a class="bn-item active" href="wallet.html"><span class="bn-icon">💳</span>Wallet</a>
+    <a class="bn-item" href="redeem.html"><span class="bn-icon">🎁</span>Redeem</a>
+    <a class="bn-item" href="dashboard.html"><span class="bn-icon">📊</span>Impact</a>
+    <a class="bn-item" href="profile.html"><span class="bn-icon">👤</span>Profile</a>
+  </div>
+
+<script>
+  // ── Load & validate user ──
+  let user;
+  try {
+    user = JSON.parse(localStorage.getItem('gk_user') || 'null');
+  } catch(e) {
+    user = null;
+  }
+  if(!user || !user.name){
+    window.location.href = '../index.html';
+  }
+
+  // ── Ensure arrays/numbers exist (defensive) ──
+  user.credits      = user.credits      || 0;
+  user.co2          = user.co2          || 0;
+  user.trips        = user.trips        || 0;
+  user.level        = user.level        || 1;
+  user.transactions = user.transactions || [];
+
+  // ── Compute eco level from credits ──
+  function getEcoLevel(credits){
+    if(credits >= 100) return { level: 5, label: '🌳 Eco Level 5' };
+    if(credits >= 50)  return { level: 4, label: '🌲 Eco Level 4' };
+    if(credits >= 25)  return { level: 3, label: '🌿 Eco Level 3' };
+    if(credits >= 10)  return { level: 2, label: '🌱 Eco Level 2' };
+    return { level: 1, label: '🪴 Eco Level 1' };
+  }
+
+  const eco = getEcoLevel(user.credits);
+
+  // ── Populate nav ──
+  document.getElementById('navAvatar').textContent  = (user.name || 'U')[0].toUpperCase();
+  document.getElementById('navCredits').textContent = '⚡ ' + user.credits.toFixed(1) + ' credits';
+
+  // ── Populate wallet card ──
+  document.getElementById('walletName').textContent = user.name;
+  document.getElementById('ecoLevel').textContent   = eco.label;
+  document.getElementById('balNum').textContent     = user.credits.toFixed(1);
+  document.getElementById('statTrips').textContent  = user.trips;
+  document.getElementById('statCo2').textContent    = user.co2.toFixed(1) + ' kg';
+  document.getElementById('statCity').textContent   = user.city || '–';
+
+  if(user.credits > 0){
+    document.getElementById('balRupee').textContent = '≈ ₹' + Math.round(user.credits * 5) + ' redeemable value';
+  } else {
+    document.getElementById('balRupee').textContent = 'Log a trip to start earning';
+  }
+
+  // ── Show/hide sections based on trip count ──
+  const hasTrips = user.trips > 0;
+  document.getElementById('firstTripNudge').style.display = hasTrips ? 'none'  : 'block';
+  document.getElementById('miniStats').style.display      = hasTrips ? 'grid'  : 'none';
+  document.getElementById('co2MeterCard').style.display   = hasTrips ? 'block' : 'none';
+
+  // ── Mini stats (earned / spent) ──
+  const txs    = user.transactions;
+  const earned = txs.filter(t => t.type === 'earn').reduce((s, t) => s + t.amt, 0);
+  const spent  = txs.filter(t => t.type === 'spend').reduce((s, t) => s + t.amt, 0);
+  document.getElementById('earnedTotal').textContent = earned.toFixed(1);
+  document.getElementById('spentTotal').textContent  = spent.toFixed(1);
+  document.getElementById('txCount').textContent     = txs.length + ' transaction' + (txs.length !== 1 ? 's' : '');
+
+  // ── CO2 bar ──
+  const co2Pct = Math.min(100, (user.co2 / 10) * 100);
+  setTimeout(() => { document.getElementById('co2Bar').style.width = co2Pct + '%'; }, 300);
+  document.getElementById('co2Sub').textContent = `You've saved ${user.co2.toFixed(1)} kg this month · Goal: 10 kg`;
+  document.getElementById('co2Pct').textContent = Math.round(co2Pct) + '% achieved';
+
+  // ── Transaction list ──
+  let currentFilter = 'all';
+
+  function filterTx(type, el){
+    currentFilter = type;
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderTx(type);
+  }
+
+  function renderTx(filter){
+    const list     = document.getElementById('txList');
+    const filtered = filter === 'all' ? txs : txs.filter(t => t.type === filter);
+
+    if(!filtered.length){
+      // Contextual empty states
+      if(filter === 'spend'){
+        list.innerHTML = `<div class="empty-state">
+          <div class="e-icon">🎁</div>
+          <div class="e-title">No redemptions yet</div>
+          <div class="e-desc">Earn credits on trips, then redeem them at partner brands.</div>
+          <a class="empty-cta" href="redeem.html">Browse Rewards</a>
+        </div>`;
+      } else if(filter === 'earn'){
+        list.innerHTML = `<div class="empty-state">
+          <div class="e-icon">🌱</div>
+          <div class="e-title">No trips logged yet</div>
+          <div class="e-desc">Your GPS-verified trips will appear here once you start travelling green.</div>
+          <a class="empty-cta" href="trip.html">Log My First Trip</a>
+        </div>`;
+      } else {
+        list.innerHTML = `<div class="empty-state">
+          <div class="e-icon">🌍</div>
+          <div class="e-title">Your wallet is empty</div>
+          <div class="e-desc">Start a GPS-verified trip to earn your first carbon credits. It only takes one bus ride!</div>
+          <a class="empty-cta" href="trip.html">Start First Trip →</a>
+        </div>`;
+      }
+      return;
+    }
+
+    list.innerHTML = filtered.map(tx => `
+      <div class="tx-item">
+        <div class="tx-icon-wrap ${tx.type === 'earn' ? 'ic-earn' : 'ic-spend'}">${tx.icon}</div>
+        <div class="tx-info">
+          <div class="tx-name">${tx.name}</div>
+          <div class="tx-date">${tx.date}</div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-amt ${tx.type}">${tx.type === 'earn' ? '+' : '-'}${tx.amt.toFixed(1)}</div>
+          <div class="tx-km">${tx.km > 0 ? tx.km.toFixed(1) + ' km' : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderTx('all');
+
+  // ── Sign out ──
+  function confirmLogout(){
+    if(confirm('Sign out of GreenKarma? Your trip data will be saved.')){
+      window.location.href = '../index.html';
+    }
+  }
+</script>
+</body>
+</html>

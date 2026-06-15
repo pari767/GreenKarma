@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenKarma – Commute Green, Earn Real Rewards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--green:#028090;--mint:#02C39A;--dark:#0A2640;--white:#ffffff;--muted:#64748B;}
+    body{font-family:'Inter',sans-serif;background:#0A2640;min-height:100vh;overflow-x:hidden;}
+
+    .bg-blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.18;pointer-events:none;z-index:0;animation:float 8s ease-in-out infinite;}
+    .blob1{width:500px;height:500px;background:#02C39A;top:-100px;right:-100px;animation-delay:0s;}
+    .blob2{width:400px;height:400px;background:#028090;bottom:-80px;left:-80px;animation-delay:-3s;}
+    .blob3{width:250px;height:250px;background:#02C39A;top:50%;left:50%;animation-delay:-5s;}
+    @keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-30px) scale(1.05);}}
+
+    .page-grid{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;}
+    @media(max-width:768px){.page-grid{grid-template-columns:1fr;}.left-panel{display:none;}}
+
+    .left-panel{padding:48px;display:flex;flex-direction:column;justify-content:center;}
+    .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:48px;}
+    .logo-icon{width:44px;height:44px;background:#02C39A;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+    .logo-text{color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.5px;}
+    .logo-text span{color:#02C39A;}
+
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(2,195,154,0.1);border:1px solid rgba(2,195,154,0.25);border-radius:99px;padding:6px 16px;color:#02C39A;font-size:13px;font-weight:600;margin-bottom:24px;width:fit-content;}
+    .hero-tag::before{content:'';width:6px;height:6px;background:#02C39A;border-radius:50%;animation:blink 1.5s infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+    .hero-h1{font-size:54px;font-weight:900;line-height:1.05;letter-spacing:-2px;color:#fff;margin-bottom:20px;}
+    .hero-h1 .accent{color:#02C39A;}
+    .hero-p{color:#9ECFCC;font-size:17px;line-height:1.65;margin-bottom:40px;max-width:440px;}
+
+    .stats-strip{display:flex;gap:32px;padding:24px 0;border-top:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:40px;}
+    .stat-item .stat-num{font-size:28px;font-weight:800;color:#02C39A;letter-spacing:-1px;line-height:1;}
+    .stat-item .stat-lbl{color:#64748B;font-size:12px;margin-top:3px;}
+
+    .how-grid{display:flex;gap:16px;}
+    .how-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 14px;flex:1;}
+    .how-item .h-icon{font-size:24px;margin-bottom:10px;}
+    .how-item .h-title{color:#fff;font-size:13px;font-weight:700;margin-bottom:4px;}
+    .how-item .h-desc{color:#64748B;font-size:11px;line-height:1.5;}
+
+    .right-panel{display:flex;align-items:center;justify-content:center;padding:40px 32px;background:rgba(255,255,255,0.02);border-left:1px solid rgba(255,255,255,0.06);}
+    .form-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:40px 36px;width:100%;max-width:400px;backdrop-filter:blur(20px);}
+    .form-title{color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;}
+    .form-sub{color:#64748B;font-size:14px;margin-bottom:32px;}
+
+    .input-group{margin-bottom:16px;}
+    .input-label{color:#9ECFCC;font-size:12px;font-weight:600;margin-bottom:6px;display:block;letter-spacing:0.3px;}
+    .input-wrap{position:relative;}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px;pointer-events:none;}
+    .form-input{width:100%;padding:13px 14px 13px 44px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s,background 0.2s;}
+    .form-input::placeholder{color:#64748B;}
+    .form-input:focus{border-color:rgba(2,195,154,0.5);background:rgba(2,195,154,0.05);}
+    .form-select{width:100%;padding:13px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+    .form-select option{background:#0A2640;color:#fff;}
+
+    .submit-btn{width:100%;padding:15px;margin-top:8px;background:linear-gradient(135deg,#028090,#02C39A);border:none;border-radius:14px;color:#0A2640;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:-0.3px;transition:transform 0.15s,opacity 0.15s;position:relative;overflow:hidden;font-family:'Inter',sans-serif;}
+    .submit-btn:hover{transform:translateY(-1px);opacity:0.95;}
+    .submit-btn .btn-shine{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);animation:shine 2.5s infinite;}
+    @keyframes shine{to{left:200%;}}
+
+    .or-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#64748B;font-size:12px;}
+    .or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08);}
+
+    .google-btn{width:100%;padding:13px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Inter',sans-serif;transition:background 0.2s;}
+    .google-btn:hover{background:rgba(255,255,255,0.09);}
+    .pledge{text-align:center;color:#64748B;font-size:11px;margin-top:20px;line-height:1.6;}
+    .pledge span{color:#02C39A;}
+
+    /* Already logged in banner */
+    .returning-banner{display:none;background:rgba(2,195,154,0.1);border:1px solid rgba(2,195,154,0.25);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center;}
+    .returning-banner.show{display:block;}
+    .rb-name{color:#02C39A;font-size:15px;font-weight:700;margin-bottom:4px;}
+    .rb-sub{color:#9ECFCC;font-size:12px;margin-bottom:12px;}
+    .rb-continue{width:100%;padding:11px;background:#02C39A;border:none;border-radius:10px;color:#0A2640;font-size:14px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:8px;}
+    .rb-logout{background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px;width:100%;color:#64748B;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+
+    .float-badge{position:fixed;background:rgba(10,38,64,0.85);border:1px solid rgba(2,195,154,0.25);border-radius:14px;padding:10px 16px;backdrop-filter:blur(12px);z-index:2;animation:floatBadge 4s ease-in-out infinite;}
+    .float-badge .fb-num{color:#02C39A;font-size:18px;font-weight:800;line-height:1;}
+    .float-badge .fb-lbl{color:#9ECFCC;font-size:10px;margin-top:1px;}
+    .fb-1{bottom:120px;left:32px;}
+    .fb-2{top:120px;right:32px;animation-delay:-2s;}
+    @media(max-width:768px){.float-badge{display:none;}}
+    @keyframes floatBadge{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+    .error-msg{color:#ef4444;font-size:12px;margin-top:8px;display:none;}
+    .error-msg.show{display:block;}
+  </style>
+</head>
+<body>
+  <div class="bg-blob blob1"></div>
+  <div class="bg-blob blob2"></div>
+  <div class="bg-blob blob3"></div>
+
+  <div class="float-badge fb-1">
+    <div class="fb-num">+2.4 🌿</div>
+    <div class="fb-lbl">Credits earned · just now</div>
+  </div>
+  <div class="float-badge fb-2">
+    <div class="fb-num">0.8 kg</div>
+    <div class="fb-lbl">CO₂ saved today</div>
+  </div>
+
+  <div class="page-grid">
+    <div class="left-panel">
+      <div class="logo-row">
+        <div class="logo-icon">🌿</div>
+        <div class="logo-text">Green<span>Karma</span></div>
+      </div>
+      <div class="hero-tag">Live in Chennai · Bengaluru · Mumbai</div>
+      <h1 class="hero-h1">Commute green.<br/>Earn <span class="accent">real</span><br/>rewards.</h1>
+      <p class="hero-p">Every bus ride, metro trip, and cycle earns you verifiable carbon credits. Redeem them at Swiggy, Zepto, BookMyShow and more.</p>
+      <div class="stats-strip">
+        <div class="stat-item"><div class="stat-num">12M+</div><div class="stat-lbl">Daily commuters</div></div>
+        <div class="stat-item"><div class="stat-num">₹0</div><div class="stat-lbl">Current eco reward</div></div>
+        <div class="stat-item"><div class="stat-num">28%</div><div class="stat-lbl">Urban CO₂ from transport</div></div>
+      </div>
+      <div class="how-grid">
+        <div class="how-item"><div class="h-icon">🚌</div><div class="h-title">Commute</div><div class="h-desc">Take bus, metro, train or cycle</div></div>
+        <div class="how-item"><div class="h-icon">🌿</div><div class="h-title">Earn credits</div><div class="h-desc">CO₂ saved = credits in wallet</div></div>
+        <div class="how-item"><div class="h-icon">💳</div><div class="h-title">Redeem</div><div class="h-desc">Spend at 10+ partner brands</div></div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="form-card">
+        <div class="form-title">Get started free 🌱</div>
+        <div class="form-sub">Join 12,000+ eco commuters already earning</div>
+
+        <!-- RETURNING USER BANNER (shown if already logged in) -->
+        <div class="returning-banner" id="returningBanner">
+          <div class="rb-name" id="rbName">Welcome back! 👋</div>
+          <div class="rb-sub" id="rbSub">Continue where you left off</div>
+          <button class="rb-continue" onclick="goToTrip()">Continue to App →</button>
+          <button class="rb-logout" onclick="logout()">Sign out & use different account</button>
+        </div>
+
+        <!-- SIGN UP FORM (hidden if already logged in) -->
+        <div id="signupForm">
+          <div class="input-group">
+            <label class="input-label">YOUR NAME</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input class="form-input" type="text" id="nameInput" placeholder="e.g. Arjun Kumar"/>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">EMAIL ADDRESS</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉️</span>
+              <input class="form-input" type="email" id="emailInput" placeholder="you@example.com"/>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">YOUR CITY</label>
+            <select class="form-select" id="cityInput">
+              <option value="">Select your city</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Delhi">Delhi</option>
+            </select>
+          </div>
+
+          <div class="error-msg" id="errorMsg">Please fill in all fields to continue.</div>
+
+          <button class="submit-btn" onclick="handleLogin()">
+            <span class="btn-shine"></span>
+            🚀 Start Earning Carbon Credits
+          </button>
+
+          <div class="or-divider">or continue with</div>
+
+          <button class="google-btn" onclick="handleGoogle()">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+            Sign in with Google
+          </button>
+
+          <div class="pledge">By joining, you commit to the <span>GreenKarma Eco Pledge 🌍</span><br/>Every trip you log helps reduce India's carbon footprint.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Check for existing session ──
+    const existingUser = localStorage.getItem('gk_user');
+
+    if(existingUser){
+      try {
+        const u = JSON.parse(existingUser);
+        if(u && u.name && u.email && u.city){
+          // Show returning user banner — do NOT auto-redirect (that was the bug)
+          document.getElementById('returningBanner').classList.add('show');
+          document.getElementById('signupForm').style.display = 'none';
+          document.getElementById('rbName').textContent = 'Welcome back, ' + u.name + '! 👋';
+          document.getElementById('rbSub').textContent =
+            u.credits > 0
+              ? '⚡ You have ' + u.credits.toFixed(1) + ' credits in your wallet'
+              : 'Ready to log your first trip?';
+        }
+      } catch(e){
+        // Corrupt data — clear it
+        localStorage.removeItem('gk_user');
+      }
+    }
+
+    function goToTrip(){
+      window.location.href = 'pages/trip.html';
+    }
+
+    function logout(){
+      localStorage.removeItem('gk_user');
+      document.getElementById('returningBanner').classList.remove('show');
+      document.getElementById('signupForm').style.display = 'block';
+    }
+
+    function handleLogin(){
+      const name  = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
+      const city  = document.getElementById('cityInput').value;
+      const err   = document.getElementById('errorMsg');
+
+      if(!name || !email || !city){
+        err.classList.add('show');
+        return;
+      }
+      err.classList.remove('show');
+
+      // Check if this email has saved data (returning user)
+      const savedKey  = 'gk_data_' + email.toLowerCase().trim();
+      const savedData = localStorage.getItem(savedKey);
+
+      let user;
+      if(savedData){
+        // Restore existing data — credits, trips, history all intact
+        user = JSON.parse(savedData);
+        user.name = name;
+        user.city = city;
+      } else {
+        // Brand new user — start fresh
+        user = {
+          name, email, city,
+          credits: 0,
+          co2: 0,
+          trips: 0,
+          level: 1,
+          joined: new Date().toLocaleDateString('en-IN'),
+          transactions: []
+        };
+      }
+
+      // Save as active session AND as email-keyed backup
+      localStorage.setItem('gk_user', JSON.stringify(user));
+      localStorage.setItem(savedKey, JSON.stringify(user));
+      window.location.href = 'pages/trip.html';
+    }
+
+    function handleGoogle(){
+      // Simulates Google login with demo credentials
+      document.getElementById('nameInput').value  = 'Demo User';
+      document.getElementById('emailInput').value = 'demo@gmail.com';
+      document.getElementById('cityInput').value  = 'Bengaluru';
+      setTimeout(handleLogin, 300);
+    }
+  </script>
+</body>
+</html>

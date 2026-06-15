@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenKarma – Redeem Credits</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#0d1f35;min-height:100vh;color:#fff;padding-bottom:90px;}
+
+    /* NAV */
+    .navbar{background:rgba(10,38,64,0.95);backdrop-filter:blur(12px);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .nav-logo-icon{width:32px;height:32px;background:#02C39A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+    .nav-logo-text{color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.4px;}
+    .nav-logo-text span{color:#02C39A;}
+    .nav-credits-pill{background:rgba(2,195,154,0.12);border:1px solid rgba(2,195,154,0.25);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:#02C39A;}
+    .nav-avatar{width:34px;height:34px;background:linear-gradient(135deg,#028090,#02C39A);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
+
+    .page{max-width:560px;margin:0 auto;padding:20px 16px;}
+
+    /* BALANCE BANNER */
+    .balance-banner{background:linear-gradient(135deg,#0f3460,#012a1e);border:1px solid rgba(2,195,154,0.2);border-radius:20px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+    .bb-left .bb-lbl{color:#9ECFCC;font-size:12px;font-weight:600;letter-spacing:0.4px;margin-bottom:4px;}
+    .bb-left .bb-num{font-size:42px;font-weight:900;color:#02C39A;letter-spacing:-2px;line-height:1;}
+    .bb-left .bb-sub{color:#64748B;font-size:12px;margin-top:4px;}
+    .bb-right{text-align:right;}
+    .bb-rupee{font-size:22px;font-weight:800;color:#fff;}
+    .bb-rupee-lbl{color:#64748B;font-size:11px;margin-top:3px;}
+
+    /* LOW CREDITS WARNING */
+    .low-credits-warn{background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.3);border-radius:14px;padding:12px 16px;margin-bottom:16px;display:none;font-size:13px;color:#FCD34D;line-height:1.5;}
+    .low-credits-warn a{color:#02C39A;text-decoration:none;font-weight:700;}
+
+    /* CATEGORY TABS */
+    .cat-tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+    .cat-tabs::-webkit-scrollbar{display:none;}
+    .ctab{padding:7px 16px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);color:#64748B;background:transparent;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+    .ctab.active{background:rgba(2,195,154,0.12);border-color:rgba(2,195,154,0.3);color:#02C39A;}
+
+    /* SECTION LABEL */
+    .section-lbl{font-size:12px;font-weight:600;color:#9ECFCC;letter-spacing:0.5px;margin-bottom:12px;}
+
+    /* REWARD GRID */
+    .reward-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+    .reward-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:18px 14px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+    .reward-card:hover{background:rgba(2,195,154,0.07);border-color:rgba(2,195,154,0.3);transform:translateY(-2px);}
+    .reward-card.cant-afford{opacity:0.45;cursor:not-allowed;}
+    .reward-card.cant-afford:hover{transform:none;background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
+    .rc-brand{font-size:28px;margin-bottom:8px;}
+    .rc-name{font-size:14px;font-weight:800;color:#fff;margin-bottom:2px;}
+    .rc-desc{font-size:11px;color:#64748B;margin-bottom:12px;line-height:1.4;}
+    .rc-footer{display:flex;align-items:center;justify-content:space-between;}
+    .rc-cost{font-size:13px;font-weight:800;color:#02C39A;}
+    .rc-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:99px;}
+    .tag-food{background:rgba(239,68,68,0.15);color:#FCA5A5;}
+    .tag-travel{background:rgba(59,130,246,0.15);color:#93C5FD;}
+    .tag-entertainment{background:rgba(168,85,247,0.15);color:#D8B4FE;}
+    .tag-grocery{background:rgba(34,197,94,0.15);color:#86EFAC;}
+    .tag-health{background:rgba(20,184,166,0.15);color:#99F6E4;}
+
+    /* LOCKED badge */
+    .locked-badge{position:absolute;top:10px;right:10px;background:rgba(100,116,139,0.3);border-radius:99px;padding:3px 8px;font-size:10px;color:#64748B;font-weight:600;}
+
+    /* POPULAR TAG */
+    .popular-tag{position:absolute;top:10px;right:10px;background:rgba(2,195,154,0.2);border:1px solid rgba(2,195,154,0.4);border-radius:99px;padding:3px 8px;font-size:10px;color:#02C39A;font-weight:700;}
+
+    /* CONFIRM MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,38,64,0.88);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+    .modal-overlay.show{display:flex;}
+    .modal{background:#0f2744;border:1px solid rgba(2,195,154,0.2);border-radius:28px 28px 0 0;padding:32px 28px 40px;width:100%;max-width:560px;animation:slideUp 0.3s cubic-bezier(0.34,1.2,0.64,1);}
+    @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+    .modal-handle{width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:99px;margin:0 auto 24px;}
+    .modal-brand{font-size:48px;text-align:center;margin-bottom:8px;}
+    .modal-title{font-size:20px;font-weight:900;text-align:center;letter-spacing:-0.5px;margin-bottom:4px;}
+    .modal-desc{color:#64748B;font-size:13px;text-align:center;margin-bottom:24px;}
+    .modal-cost-row{background:rgba(2,195,154,0.07);border:1px solid rgba(2,195,154,0.15);border-radius:14px;padding:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
+    .mcr-lbl{color:#9ECFCC;font-size:13px;}
+    .mcr-val{font-size:20px;font-weight:900;color:#02C39A;}
+    .modal-after{display:flex;justify-content:space-between;font-size:13px;color:#64748B;margin-bottom:24px;padding:0 2px;}
+    .modal-after span{color:#fff;font-weight:600;}
+    .modal-confirm-btn{width:100%;padding:16px;background:linear-gradient(135deg,#028090,#02C39A);border:none;border-radius:16px;color:#0A2640;font-size:16px;font-weight:900;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:10px;letter-spacing:-0.3px;}
+    .modal-cancel-btn{width:100%;padding:14px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:16px;color:#64748B;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+
+    /* SUCCESS OVERLAY */
+    .success-overlay{position:fixed;inset:0;background:rgba(10,38,64,0.95);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(12px);}
+    .success-overlay.show{display:flex;}
+    .success-card{background:#0f2744;border:1px solid rgba(2,195,154,0.3);border-radius:28px;padding:40px 32px;text-align:center;max-width:340px;width:90%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+    @keyframes popIn{from{transform:scale(0.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .sc-icon{font-size:64px;margin-bottom:16px;}
+    .sc-title{font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;}
+    .sc-title span{color:#02C39A;}
+    .sc-sub{color:#9ECFCC;font-size:13px;line-height:1.6;margin-bottom:20px;}
+    .coupon-box{background:rgba(2,195,154,0.08);border:2px dashed rgba(2,195,154,0.4);border-radius:14px;padding:16px;margin-bottom:24px;}
+    .coupon-lbl{color:#64748B;font-size:11px;margin-bottom:6px;font-weight:600;letter-spacing:0.5px;}
+    .coupon-code{font-size:28px;font-weight:900;color:#02C39A;letter-spacing:4px;}
+    .coupon-note{font-size:11px;color:#64748B;margin-top:6px;}
+    .sc-done-btn{width:100%;padding:14px;background:#02C39A;border:none;border-radius:14px;color:#0A2640;font-size:15px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:10px;}
+    .sc-wallet-btn{width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:14px;color:#9ECFCC;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+
+    /* BOTTOM NAV */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,38,64,0.97);border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:50;backdrop-filter:blur(12px);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#64748B;text-decoration:none;padding:4px 12px;border-radius:12px;transition:color 0.2s;}
+    .bn-item .bn-icon{font-size:22px;}
+    .bn-item.active,.bn-item:hover{color:#02C39A;}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="nav-logo" href="../index.html">
+      <div class="nav-logo-icon">🌿</div>
+      <div class="nav-logo-text">Green<span>Karma</span></div>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="nav-credits-pill" id="navCredits">⚡ 0 credits</div>
+      <div class="nav-avatar" id="navAvatar">?</div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- BALANCE BANNER -->
+    <div class="balance-banner">
+      <div class="bb-left">
+        <div class="bb-lbl">YOUR BALANCE</div>
+        <div class="bb-num" id="balNum">0.0</div>
+        <div class="bb-sub">carbon credits available</div>
+      </div>
+      <div class="bb-right">
+        <div class="bb-rupee" id="balRupee">₹0</div>
+        <div class="bb-rupee-lbl">redeemable value</div>
+      </div>
+    </div>
+
+    <!-- LOW CREDITS WARNING -->
+    <div class="low-credits-warn" id="lowWarn">
+      ⚠️ You need more credits to redeem most rewards.
+      <a href="trip.html">Log a trip to earn more →</a>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="cat-tabs">
+      <button class="ctab active" onclick="filterCat('all',this)">All Rewards</button>
+      <button class="ctab" onclick="filterCat('food',this)">🍔 Food</button>
+      <button class="ctab" onclick="filterCat('grocery',this)">🛒 Grocery</button>
+      <button class="ctab" onclick="filterCat('entertainment',this)">🎬 Entertainment</button>
+      <button class="ctab" onclick="filterCat('travel',this)">✈️ Travel</button>
+      <button class="ctab" onclick="filterCat('health',this)">💚 Health</button>
+    </div>
+
+    <!-- REWARD GRID -->
+    <div class="section-lbl" id="rewardSectionLbl">ALL PARTNER REWARDS</div>
+    <div class="reward-grid" id="rewardGrid"></div>
+
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-brand" id="modalBrand">🍔</div>
+      <div class="modal-title" id="modalTitle">Reward Name</div>
+      <div class="modal-desc" id="modalDesc">Reward description</div>
+      <div class="modal-cost-row">
+        <div class="mcr-lbl">Credits to redeem</div>
+        <div class="mcr-val" id="modalCost">0 credits</div>
+      </div>
+      <div class="modal-after">
+        <span>Balance after redemption</span>
+        <span id="modalAfter">0 credits</span>
+      </div>
+      <button class="modal-confirm-btn" onclick="confirmRedeem()">Confirm Redemption →</button>
+      <button class="modal-cancel-btn" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-card">
+      <div class="sc-icon">🎉</div>
+      <div class="sc-title">Redeemed! <span id="scBrand"></span></div>
+      <div class="sc-sub" id="scDesc">Your reward is ready to use.</div>
+      <div class="coupon-box">
+        <div class="coupon-lbl">YOUR COUPON CODE</div>
+        <div class="coupon-code" id="scCode">GK–????</div>
+        <div class="coupon-note">Valid for 30 days · Show at checkout</div>
+      </div>
+      <button class="sc-done-btn" onclick="closeSuccess()">Done ✓</button>
+      <button class="sc-wallet-btn" onclick="window.location.href='wallet.html'">View My Wallet</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <a class="bn-item" href="trip.html"><span class="bn-icon">🚌</span>Trip</a>
+    <a class="bn-item" href="wallet.html"><span class="bn-icon">💳</span>Wallet</a>
+    <a class="bn-item active" href="redeem.html"><span class="bn-icon">🎁</span>Redeem</a>
+    <a class="bn-item" href="dashboard.html"><span class="bn-icon">📊</span>Impact</a>
+    <a class="bn-item" href="profile.html"><span class="bn-icon">👤</span>Profile</a>
+  </div>
+
+<script>
+  // ── Load user ──
+  let user;
+  try { user = JSON.parse(localStorage.getItem('gk_user') || 'null'); } catch(e){ user = null; }
+  if(!user || !user.name){ window.location.href = '../index.html'; }
+
+  user.credits      = user.credits      || 0;
+  user.transactions = user.transactions || [];
+
+  // ── Populate nav & banner ──
+  function refreshUI(){
+    document.getElementById('navAvatar').textContent   = (user.name||'U')[0].toUpperCase();
+    document.getElementById('navCredits').textContent  = '⚡ ' + user.credits.toFixed(1) + ' credits';
+    document.getElementById('balNum').textContent      = user.credits.toFixed(1);
+    document.getElementById('balRupee').textContent    = '₹' + Math.round(user.credits * 5);
+    document.getElementById('lowWarn').style.display   = user.credits < 5 ? 'block' : 'none';
+    renderRewards(currentCat);
+  }
+
+  // ── Reward catalogue ──
+  const REWARDS = [
+    // Food
+    { id:'sw10', brand:'🛵', name:'Swiggy', desc:'₹50 off on your next food order (min ₹199)', cost:10, tag:'food',  tagLabel:'Food',          popular:true  },
+    { id:'zm10', brand:'🍽️', name:'Zomato', desc:'₹50 off on orders above ₹149',              cost:10, tag:'food',  tagLabel:'Food',          popular:false },
+    { id:'mc15', brand:'🍟', name:"McDonald's", desc:'Free McVeggie burger with any meal',     cost:15, tag:'food',  tagLabel:'Food',          popular:false },
+
+    // Grocery
+    { id:'zp8',  brand:'⚡', name:'Zepto',   desc:'₹40 off on 10-min grocery delivery',       cost:8,  tag:'grocery', tagLabel:'Grocery',     popular:true  },
+    { id:'bb12', brand:'🛒', name:'BigBasket',desc:'₹75 off on orders above ₹500',            cost:12, tag:'grocery', tagLabel:'Grocery',     popular:false },
+    { id:'in10', brand:'🥬', name:'Instamart',desc:'₹40 off on first Instamart order',        cost:10, tag:'grocery', tagLabel:'Grocery',     popular:false },
+
+    // Entertainment
+    { id:'bm20', brand:'🎬', name:'BookMyShow', desc:'₹100 off on movie tickets (any show)', cost:20, tag:'entertainment', tagLabel:'Entertainment', popular:true  },
+    { id:'sp15', brand:'🎵', name:'Spotify',    desc:'1 month Premium for free',             cost:15, tag:'entertainment', tagLabel:'Entertainment', popular:false },
+    { id:'yt25', brand:'📺', name:'YouTube Premium', desc:'2 months ad-free YouTube',        cost:25, tag:'entertainment', tagLabel:'Entertainment', popular:false },
+
+    // Travel
+    { id:'ola5', brand:'🚖', name:'Ola',      desc:'₹30 off on your next ride',              cost:5,  tag:'travel', tagLabel:'Travel',        popular:false },
+    { id:'rap5', brand:'🚇', name:'RapidX',   desc:'10 free metro trips (Delhi NCR)',        cost:18, tag:'travel', tagLabel:'Travel',        popular:false },
+    { id:'irct', brand:'🚂', name:'IRCTC',    desc:'₹100 off on train ticket booking',      cost:20, tag:'travel', tagLabel:'Travel',        popular:false },
+
+    // Health
+    { id:'ct10', brand:'🧘', name:'Cult.fit', desc:'1 free workout class at any Cult centre',cost:10, tag:'health', tagLabel:'Health',        popular:false },
+    { id:'ph8',  brand:'💊', name:'PharmEasy',desc:'15% off on medicines & health products', cost:8,  tag:'health', tagLabel:'Health',        popular:false },
+    { id:'nd12', brand:'🌿', name:'Nykaa',    desc:'₹100 off on natural & organic products', cost:12, tag:'health', tagLabel:'Health',        popular:false },
+  ];
+
+  const TAG_COLORS = {
+    food:'tag-food', grocery:'tag-grocery',
+    entertainment:'tag-entertainment', travel:'tag-travel', health:'tag-health'
+  };
+
+  let currentCat = 'all';
+  let pendingReward = null;
+
+  function filterCat(cat, el){
+    currentCat = cat;
+    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const labels = {
+      all:'ALL PARTNER REWARDS', food:'🍔 FOOD & DINING',
+      grocery:'🛒 GROCERY DELIVERY', entertainment:'🎬 ENTERTAINMENT',
+      travel:'✈️ TRAVEL', health:'💚 HEALTH & WELLNESS'
+    };
+    document.getElementById('rewardSectionLbl').textContent = labels[cat] || 'REWARDS';
+    renderRewards(cat);
+  }
+
+  function renderRewards(cat){
+    const grid = document.getElementById('rewardGrid');
+    const filtered = cat === 'all' ? REWARDS : REWARDS.filter(r => r.tag === cat);
+
+    grid.innerHTML = filtered.map(r => {
+      const canAfford = user.credits >= r.cost;
+      return `
+        <div class="reward-card ${canAfford ? '' : 'cant-afford'}"
+             onclick="${canAfford ? `openModal('${r.id}')` : 'showCantAfford()'}">
+          ${r.popular ? '<div class="popular-tag">🔥 Popular</div>' : ''}
+          ${!canAfford ? '<div class="locked-badge">🔒 ' + r.cost + ' needed</div>' : ''}
+          <div class="rc-brand">${r.brand}</div>
+          <div class="rc-name">${r.name}</div>
+          <div class="rc-desc">${r.desc}</div>
+          <div class="rc-footer">
+            <div class="rc-cost">⚡ ${r.cost} credits</div>
+            <div class="rc-tag ${TAG_COLORS[r.tag]}">${r.tagLabel}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function showCantAfford(){
+    // Flash the low credits warning
+    const w = document.getElementById('lowWarn');
+    w.style.display = 'block';
+    w.style.background = 'rgba(217,119,6,0.2)';
+    setTimeout(() => { w.style.background = 'rgba(217,119,6,0.1)'; }, 400);
+    w.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+
+  // ── Modal ──
+  function openModal(id){
+    pendingReward = REWARDS.find(r => r.id === id);
+    if(!pendingReward) return;
+    const after = Math.max(0, user.credits - pendingReward.cost).toFixed(1);
+    document.getElementById('modalBrand').textContent  = pendingReward.brand;
+    document.getElementById('modalTitle').textContent  = pendingReward.name;
+    document.getElementById('modalDesc').textContent   = pendingReward.desc;
+    document.getElementById('modalCost').textContent   = pendingReward.cost + ' credits';
+    document.getElementById('modalAfter').textContent  = after + ' credits';
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal(e){
+    if(e && e.target !== document.getElementById('modalOverlay')) return;
+    document.getElementById('modalOverlay').classList.remove('show');
+    pendingReward = null;
+  }
+
+  // ── Confirm redemption ──
+  function confirmRedeem(){
+    if(!pendingReward) return;
+    if(user.credits < pendingReward.cost){
+      alert('Not enough credits!');
+      return;
+    }
+
+    // Deduct credits
+    user.credits = parseFloat((user.credits - pendingReward.cost).toFixed(1));
+
+    // Generate coupon code
+    const code = 'GK' + Math.random().toString(36).substring(2,6).toUpperCase();
+
+    // Add to transaction history
+    user.transactions = user.transactions || [];
+    user.transactions.unshift({
+      icon: pendingReward.brand,
+      name: pendingReward.name + ' – ' + pendingReward.desc,
+      date: 'Redeemed · Just now · Code: ' + code,
+      km: 0,
+      amt: pendingReward.cost,
+      type: 'spend'
+    });
+
+    // Save
+    localStorage.setItem('gk_user', JSON.stringify(user));
+    localStorage.setItem('gk_data_' + user.email, JSON.stringify(user));
+
+    // Close confirm modal, show success
+    document.getElementById('modalOverlay').classList.remove('show');
+    document.getElementById('scBrand').textContent  = pendingReward.name;
+    document.getElementById('scDesc').textContent   = pendingReward.desc;
+    document.getElementById('scCode').textContent   = code;
+    document.getElementById('successOverlay').classList.add('show');
+
+    // Refresh all UI
+    refreshUI();
+    pendingReward = null;
+  }
+
+  function closeSuccess(){
+    document.getElementById('successOverlay').classList.remove('show');
+  }
+
+  // ── Init ──
+  refreshUI();
+</script>
+</body>
+</html>

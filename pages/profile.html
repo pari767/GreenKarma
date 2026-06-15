@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenKarma – Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#0d1f35;min-height:100vh;color:#fff;padding-bottom:90px;}
+
+    /* NAV */
+    .navbar{background:rgba(10,38,64,0.95);backdrop-filter:blur(12px);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .nav-logo-icon{width:32px;height:32px;background:#02C39A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+    .nav-logo-text{color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.4px;}
+    .nav-logo-text span{color:#02C39A;}
+    .nav-credits-pill{background:rgba(2,195,154,0.12);border:1px solid rgba(2,195,154,0.25);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:#02C39A;}
+
+    .page{max-width:560px;margin:0 auto;padding:20px 16px;}
+
+    /* PROFILE HERO */
+    .profile-hero{background:linear-gradient(135deg,#0f3460,#012a1e);border:1px solid rgba(2,195,154,0.2);border-radius:24px;padding:28px;margin-bottom:16px;text-align:center;position:relative;overflow:hidden;}
+    .profile-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(2,195,154,0.06);border-radius:50%;}
+    .avatar-ring{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#028090,#02C39A);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;margin:0 auto 14px;position:relative;z-index:1;}
+    .profile-name{font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;}
+    .profile-email{color:#64748B;font-size:13px;margin-bottom:12px;}
+    .profile-badges-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+    .p-badge{background:rgba(2,195,154,0.12);border:1px solid rgba(2,195,154,0.25);border-radius:99px;padding:4px 12px;font-size:11px;font-weight:700;color:#02C39A;}
+    .p-badge.city{background:rgba(2,128,144,0.12);border-color:rgba(2,128,144,0.25);color:#67E8F9;}
+
+    /* QUICK STATS */
+    .quick-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:16px;}
+    .qs-item{background:#0A2640;padding:14px;text-align:center;}
+    .qs-val{font-size:20px;font-weight:900;color:#02C39A;}
+    .qs-lbl{font-size:10px;color:#64748B;margin-top:3px;}
+
+    /* SECTION */
+    .sec-lbl{font-size:12px;font-weight:600;color:#9ECFCC;letter-spacing:0.5px;margin-bottom:10px;margin-top:4px;}
+
+    /* SETTINGS CARD */
+    .settings-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:16px;}
+    .settings-row{display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.2s;}
+    .settings-row:last-child{border-bottom:none;}
+    .settings-row:hover{background:rgba(255,255,255,0.04);}
+    .sr-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .ic-green{background:rgba(2,195,154,0.12);}
+    .ic-blue{background:rgba(2,128,144,0.12);}
+    .ic-purple{background:rgba(139,92,246,0.12);}
+    .ic-orange{background:rgba(249,115,22,0.12);}
+    .ic-red{background:rgba(239,68,68,0.12);}
+    .sr-info{flex:1;}
+    .sr-title{font-size:14px;font-weight:600;color:#fff;}
+    .sr-sub{font-size:11px;color:#64748B;margin-top:2px;}
+    .sr-arrow{color:#64748B;font-size:16px;}
+    .sr-toggle{width:44px;height:24px;background:rgba(255,255,255,0.1);border-radius:99px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
+    .sr-toggle.on{background:#02C39A;}
+    .sr-toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left 0.2s;}
+    .sr-toggle.on::after{left:23px;}
+
+    /* EDIT FORM (hidden by default) */
+    .edit-form{display:none;padding:16px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(2,195,154,0.03);}
+    .edit-form.show{display:block;}
+    .ef-label{color:#9ECFCC;font-size:11px;font-weight:600;margin-bottom:6px;display:block;letter-spacing:0.3px;}
+    .ef-input{width:100%;padding:11px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:10px;transition:border-color 0.2s;}
+    .ef-input:focus{border-color:rgba(2,195,154,0.5);}
+    .ef-select{width:100%;padding:11px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:10px;appearance:none;}
+    .ef-select option{background:#0A2640;}
+    .ef-btn-row{display:flex;gap:8px;}
+    .ef-save{flex:1;padding:10px;background:#02C39A;border:none;border-radius:10px;color:#0A2640;font-size:13px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif;}
+    .ef-cancel{padding:10px 16px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#64748B;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+
+    /* DANGER ZONE */
+    .danger-card{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);border-radius:18px;overflow:hidden;margin-bottom:16px;}
+    .danger-row{display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid rgba(239,68,68,0.08);cursor:pointer;transition:background 0.2s;}
+    .danger-row:last-child{border-bottom:none;}
+    .danger-row:hover{background:rgba(239,68,68,0.06);}
+    .dr-title{font-size:14px;font-weight:600;color:#FCA5A5;}
+    .dr-sub{font-size:11px;color:#64748B;margin-top:2px;}
+
+    /* JOINED FOOTER */
+    .joined-footer{text-align:center;color:#64748B;font-size:12px;padding:8px 0 4px;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#02C39A;color:#0A2640;font-size:13px;font-weight:700;padding:10px 20px;border-radius:99px;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+    .toast.show{opacity:1;}
+
+    /* BOTTOM NAV */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,38,64,0.97);border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:50;backdrop-filter:blur(12px);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#64748B;text-decoration:none;padding:4px 12px;border-radius:12px;transition:color 0.2s;}
+    .bn-item .bn-icon{font-size:22px;}
+    .bn-item.active,.bn-item:hover{color:#02C39A;}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="nav-logo" href="../index.html">
+      <div class="nav-logo-icon">🌿</div>
+      <div class="nav-logo-text">Green<span>Karma</span></div>
+    </a>
+    <div class="nav-credits-pill" id="navCredits">⚡ 0 credits</div>
+  </nav>
+
+  <div class="page">
+
+    <!-- PROFILE HERO -->
+    <div class="profile-hero">
+      <div class="avatar-ring" id="avatarRing">?</div>
+      <div class="profile-name" id="profileName">–</div>
+      <div class="profile-email" id="profileEmail">–</div>
+      <div class="profile-badges-row">
+        <div class="p-badge" id="ecoLevelBadge">🌱 Eco Level 1</div>
+        <div class="p-badge city" id="cityBadge">📍 –</div>
+        <div class="p-badge" id="joinedBadge">📅 –</div>
+      </div>
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="quick-stats">
+      <div class="qs-item">
+        <div class="qs-val" id="qsTrips">0</div>
+        <div class="qs-lbl">Trips</div>
+      </div>
+      <div class="qs-item">
+        <div class="qs-val" id="qsCo2">0 kg</div>
+        <div class="qs-lbl">CO₂ saved</div>
+      </div>
+      <div class="qs-item">
+        <div class="qs-val" id="qsCredits">0</div>
+        <div class="qs-lbl">Credits</div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT SETTINGS -->
+    <div class="sec-lbl">ACCOUNT</div>
+    <div class="settings-card">
+
+      <!-- Edit Name -->
+      <div class="settings-row" onclick="toggleEdit('name')">
+        <div class="sr-icon ic-green">👤</div>
+        <div class="sr-info">
+          <div class="sr-title">Display Name</div>
+          <div class="sr-sub" id="namePreview">–</div>
+        </div>
+        <div class="sr-arrow">›</div>
+      </div>
+      <div class="edit-form" id="editName">
+        <label class="ef-label">YOUR NAME</label>
+        <input class="ef-input" type="text" id="nameInput" placeholder="Enter your name"/>
+        <div class="ef-btn-row">
+          <button class="ef-save" onclick="saveName()">Save</button>
+          <button class="ef-cancel" onclick="toggleEdit('name')">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Edit City -->
+      <div class="settings-row" onclick="toggleEdit('city')">
+        <div class="sr-icon ic-blue">📍</div>
+        <div class="sr-info">
+          <div class="sr-title">City</div>
+          <div class="sr-sub" id="cityPreview">–</div>
+        </div>
+        <div class="sr-arrow">›</div>
+      </div>
+      <div class="edit-form" id="editCity">
+        <label class="ef-label">YOUR CITY</label>
+        <select class="ef-select" id="cityInput">
+          <option value="Chennai">Chennai</option>
+          <option value="Bengaluru">Bengaluru</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+        <div class="ef-btn-row">
+          <button class="ef-save" onclick="saveCity()">Save</button>
+          <button class="ef-cancel" onclick="toggleEdit('city')">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Email (read only) -->
+      <div class="settings-row" style="cursor:default;">
+        <div class="sr-icon ic-purple">✉️</div>
+        <div class="sr-info">
+          <div class="sr-title">Email</div>
+          <div class="sr-sub" id="emailPreview">–</div>
+        </div>
+        <div style="font-size:10px;color:#64748B;background:rgba(255,255,255,0.06);border-radius:6px;padding:3px 8px;">locked</div>
+      </div>
+
+    </div>
+
+    <!-- PREFERENCES -->
+    <div class="sec-lbl">PREFERENCES</div>
+    <div class="settings-card">
+      <div class="settings-row" style="cursor:default;">
+        <div class="sr-icon ic-green">🔔</div>
+        <div class="sr-info">
+          <div class="sr-title">Trip Reminders</div>
+          <div class="sr-sub">Remind me to log my commute</div>
+        </div>
+        <div class="sr-toggle on" id="toggleReminders" onclick="togglePref('reminders')"></div>
+      </div>
+      <div class="settings-row" style="cursor:default;">
+        <div class="sr-icon ic-blue">🏆</div>
+        <div class="sr-info">
+          <div class="sr-title">Leaderboard Visibility</div>
+          <div class="sr-sub">Show me on city leaderboard</div>
+        </div>
+        <div class="sr-toggle on" id="toggleLeader" onclick="togglePref('leaderboard')"></div>
+      </div>
+      <div class="settings-row" style="cursor:default;">
+        <div class="sr-icon ic-orange">🌙</div>
+        <div class="sr-info">
+          <div class="sr-title">Dark Mode</div>
+          <div class="sr-sub">Always on · Best for battery</div>
+        </div>
+        <div class="sr-toggle on" style="pointer-events:none;opacity:0.6;"></div>
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="sec-lbl">QUICK LINKS</div>
+    <div class="settings-card">
+      <a class="settings-row" href="trip.html" style="text-decoration:none;">
+        <div class="sr-icon ic-green">🚌</div>
+        <div class="sr-info">
+          <div class="sr-title">Log a Trip</div>
+          <div class="sr-sub">Start earning credits now</div>
+        </div>
+        <div class="sr-arrow">›</div>
+      </a>
+      <a class="settings-row" href="wallet.html" style="text-decoration:none;">
+        <div class="sr-icon ic-blue">💳</div>
+        <div class="sr-info">
+          <div class="sr-title">My Wallet</div>
+          <div class="sr-sub" id="walletLinkSub">View credits & history</div>
+        </div>
+        <div class="sr-arrow">›</div>
+      </a>
+      <a class="settings-row" href="dashboard.html" style="text-decoration:none;">
+        <div class="sr-icon ic-purple">📊</div>
+        <div class="sr-info">
+          <div class="sr-title">Impact Dashboard</div>
+          <div class="sr-sub">See your CO₂ savings</div>
+        </div>
+        <div class="sr-arrow">›</div>
+      </a>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="sec-lbl">ACCOUNT ACTIONS</div>
+    <div class="danger-card">
+      <div class="danger-row" onclick="signOut()">
+        <div class="sr-icon ic-orange">🚪</div>
+        <div class="sr-info">
+          <div class="dr-title">Sign Out</div>
+          <div class="dr-sub">Your data stays saved locally</div>
+        </div>
+        <div class="sr-arrow" style="color:#64748B;">›</div>
+      </div>
+      <div class="danger-row" onclick="clearData()">
+        <div class="sr-icon ic-red">🗑️</div>
+        <div class="sr-info">
+          <div class="dr-title">Clear All Data</div>
+          <div class="dr-sub">Permanently deletes all trips, credits & history</div>
+        </div>
+        <div class="sr-arrow" style="color:#64748B;">›</div>
+      </div>
+    </div>
+
+    <div class="joined-footer" id="joinedFooter">Member since –</div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+  <a class="bn-item" href="trip.html"><span class="bn-icon">🚌</span>Trip</a>
+  <a class="bn-item" href="wallet.html"><span class="bn-icon">💳</span>Wallet</a>
+  <a class="bn-item" href="redeem.html"><span class="bn-icon">🎁</span>Redeem</a>
+  <a class="bn-item" href="dashboard.html"><span class="bn-icon">📊</span>Impact</a>
+  <a class="bn-item active" href="profile.html"><span class="bn-icon">👤</span>Profile</a>
+</div>
+
+<script>
+  // ── Load user ──
+  let user;
+  try { user = JSON.parse(localStorage.getItem('gk_user') || 'null'); } catch(e){ user=null; }
+  if(!user || !user.name){ window.location.href = '../index.html'; }
+
+  user.credits      = user.credits      || 0;
+  user.co2          = user.co2          || 0;
+  user.trips        = user.trips        || 0;
+  user.transactions = user.transactions || [];
+  user.prefs        = user.prefs        || { reminders: true, leaderboard: true };
+
+  function getEcoLevel(credits){
+    if(credits >= 100) return '🌳 Eco Level 5';
+    if(credits >= 50)  return '🌲 Eco Level 4';
+    if(credits >= 25)  return '🌿 Eco Level 3';
+    if(credits >= 10)  return '🌱 Eco Level 2';
+    return '🪴 Eco Level 1';
+  }
+
+  function refreshUI(){
+    const initial = (user.name||'U')[0].toUpperCase();
+    document.getElementById('navCredits').textContent      = '⚡ ' + user.credits.toFixed(1) + ' credits';
+    document.getElementById('avatarRing').textContent      = initial;
+    document.getElementById('profileName').textContent     = user.name || '–';
+    document.getElementById('profileEmail').textContent    = user.email || '–';
+    document.getElementById('ecoLevelBadge').textContent   = getEcoLevel(user.credits);
+    document.getElementById('cityBadge').textContent       = '📍 ' + (user.city || '–');
+    document.getElementById('joinedBadge').textContent     = '📅 ' + (user.joined || 'Today');
+    document.getElementById('qsTrips').textContent         = user.trips;
+    document.getElementById('qsCo2').textContent           = user.co2.toFixed(1) + ' kg';
+    document.getElementById('qsCredits').textContent       = user.credits.toFixed(1);
+    document.getElementById('namePreview').textContent     = user.name || '–';
+    document.getElementById('cityPreview').textContent     = user.city || '–';
+    document.getElementById('emailPreview').textContent    = user.email || '–';
+    document.getElementById('walletLinkSub').textContent   = user.credits.toFixed(1) + ' credits available';
+    document.getElementById('joinedFooter').textContent    = 'Member since ' + (user.joined || 'today');
+
+    // Toggles
+    document.getElementById('toggleReminders').classList.toggle('on', !!user.prefs.reminders);
+    document.getElementById('toggleLeader').classList.toggle('on', !!user.prefs.leaderboard);
+
+    // Pre-fill edit inputs
+    document.getElementById('nameInput').value = user.name || '';
+    document.getElementById('cityInput').value = user.city || 'Chennai';
+  }
+
+  refreshUI();
+
+  // ── Edit forms ──
+  function toggleEdit(section){
+    const form = document.getElementById('edit' + section.charAt(0).toUpperCase() + section.slice(1));
+    form.classList.toggle('show');
+  }
+
+  function saveName(){
+    const val = document.getElementById('nameInput').value.trim();
+    if(!val){ showToast('⚠️ Name cannot be empty'); return; }
+    user.name = val;
+    localStorage.setItem('gk_user', JSON.stringify(user));
+    refreshUI();
+    document.getElementById('editName').classList.remove('show');
+    showToast('✅ Name updated!');
+  }
+
+  function saveCity(){
+    const val = document.getElementById('cityInput').value;
+    if(!val){ showToast('⚠️ Please select a city'); return; }
+    user.city = val;
+    localStorage.setItem('gk_user', JSON.stringify(user));
+    refreshUI();
+    document.getElementById('editCity').classList.remove('show');
+    showToast('✅ City updated!');
+  }
+
+  // ── Preference toggles ──
+  function togglePref(key){
+    user.prefs[key] = !user.prefs[key];
+    localStorage.setItem('gk_user', JSON.stringify(user));
+    refreshUI();
+    showToast(user.prefs[key] ? '✅ Enabled' : '🔕 Disabled');
+  }
+
+  // ── Sign out ──
+  function signOut(){
+    if(confirm('Sign out of GreenKarma?\n\nYour trips and credits stay saved — you can sign back in anytime.')){
+      window.location.href = '../index.html';
+    }
+  }
+
+  // ── Clear all data ──
+  function clearData(){
+    if(confirm('⚠️ Delete ALL data?\n\nThis will permanently remove all your trips, credits, and history. This cannot be undone.')){
+      localStorage.removeItem('gk_user');
+      window.location.href = '../index.html';
+    }
+  }
+
+  // ── Toast ──
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>

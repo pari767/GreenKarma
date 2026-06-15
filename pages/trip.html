@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenKarma – New Trip</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--green:#028090;--mint:#02C39A;--dark:#0A2640;}
+    body{font-family:'Inter',sans-serif;background:#0d1f35;min-height:100vh;color:#fff;padding-bottom:90px;}
+
+    .navbar{background:rgba(10,38,64,0.95);backdrop-filter:blur(12px);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .nav-logo-icon{width:32px;height:32px;background:#02C39A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+    .nav-logo-text{color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.4px;}
+    .nav-logo-text span{color:#02C39A;}
+    .nav-right{display:flex;align-items:center;gap:10px;}
+    .nav-credits{background:rgba(2,195,154,0.12);border:1px solid rgba(2,195,154,0.25);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:#02C39A;}
+    .nav-avatar{width:34px;height:34px;background:linear-gradient(135deg,#028090,#02C39A);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
+
+    .page{max-width:560px;margin:0 auto;padding:24px 16px;}
+    .page-greeting{color:#9ECFCC;font-size:13px;margin-bottom:4px;}
+    .page-title{font-size:26px;font-weight:900;letter-spacing:-0.8px;margin-bottom:24px;}
+
+    .section-label{color:#9ECFCC;font-size:12px;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;}
+
+    /* TRANSPORT */
+    .transport-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;}
+    .t-btn{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 6px;text-align:center;cursor:pointer;transition:all 0.2s;}
+    .t-btn:hover{background:rgba(2,195,154,0.08);border-color:rgba(2,195,154,0.3);}
+    .t-btn.selected{background:rgba(2,195,154,0.12);border-color:#02C39A;}
+    .t-btn.disabled{opacity:0.4;pointer-events:none;}
+    .t-btn .t-icon{font-size:28px;margin-bottom:6px;display:block;}
+    .t-btn .t-name{font-size:11px;font-weight:600;color:#9ECFCC;}
+    .t-btn.selected .t-name{color:#02C39A;}
+    .t-btn .t-co2{font-size:10px;color:#64748B;margin-top:2px;}
+
+    /* GPS CARD */
+    .gps-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px;margin-bottom:20px;}
+
+    /* STATES */
+    .state{display:none;}
+    .state.active{display:block;}
+
+    /* IDLE state */
+    .gps-idle-icon{font-size:52px;text-align:center;margin-bottom:12px;}
+    .gps-idle-title{font-size:18px;font-weight:800;text-align:center;margin-bottom:8px;}
+    .gps-idle-sub{color:#64748B;font-size:13px;text-align:center;line-height:1.6;margin-bottom:24px;}
+    .anti-fraud-badge{background:rgba(2,195,154,0.08);border:1px solid rgba(2,195,154,0.2);border-radius:12px;padding:12px 16px;margin-bottom:24px;display:flex;align-items:flex-start;gap:10px;}
+    .anti-fraud-badge .af-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+    .anti-fraud-badge .af-text{font-size:12px;color:#9ECFCC;line-height:1.6;}
+    .anti-fraud-badge .af-text strong{color:#02C39A;display:block;margin-bottom:2px;}
+
+    /* LOCATING state */
+    .locating-wrap{text-align:center;padding:16px 0;}
+    .pulse-ring{width:80px;height:80px;border-radius:50%;background:rgba(2,195,154,0.15);border:2px solid rgba(2,195,154,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:pulseRing 1.5s ease infinite;font-size:32px;}
+    @keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(2,195,154,0.4);}50%{box-shadow:0 0 0 20px rgba(2,195,154,0);}}
+    .locating-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+    .locating-sub{color:#64748B;font-size:13px;}
+
+    /* TRACKING state */
+    .tracking-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .tracking-live{display:flex;align-items:center;gap:6px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:99px;padding:5px 12px;}
+    .live-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:blink 1s infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+    .live-text{font-size:12px;font-weight:700;color:#ef4444;}
+    .tracking-timer{font-size:14px;font-weight:700;color:#9ECFCC;}
+
+    .tracking-big{text-align:center;margin:8px 0 20px;}
+    .tracking-dist{font-size:64px;font-weight:900;color:#02C39A;letter-spacing:-3px;line-height:1;}
+    .tracking-dist-lbl{font-size:14px;color:#64748B;margin-top:2px;}
+
+    .tracking-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
+    .ts-item{background:rgba(255,255,255,0.04);border-radius:14px;padding:14px;text-align:center;}
+    .ts-val{font-size:18px;font-weight:800;color:#fff;}
+    .ts-lbl{font-size:10px;color:#64748B;margin-top:3px;}
+
+    .location-row{background:rgba(255,255,255,0.03);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start;}
+    .loc-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+    .loc-dot.start{background:#02C39A;}
+    .loc-dot.end{background:#64748B;animation:pulse2 1s infinite;}
+    @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:0.3;}}
+    .loc-label{font-size:11px;color:#64748B;margin-bottom:2px;}
+    .loc-value{font-size:13px;font-weight:600;color:#fff;}
+
+    /* PREVIEW card */
+    .preview-card{background:linear-gradient(135deg,#0f3460,#0A2640);border:1px solid rgba(2,195,154,0.2);border-radius:20px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden;}
+    .preview-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(2,195,154,0.08);border-radius:50%;}
+    .preview-title{font-size:12px;font-weight:600;color:#9ECFCC;letter-spacing:0.5px;margin-bottom:16px;}
+    .preview-big{text-align:center;margin-bottom:20px;}
+    .preview-big .credit-num{font-size:64px;font-weight:900;color:#02C39A;letter-spacing:-3px;line-height:1;}
+    .preview-big .credit-lbl{font-size:13px;color:#9ECFCC;margin-top:4px;}
+    .preview-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,0.07);font-size:13px;}
+    .pr-key{color:#64748B;}
+    .pr-val{color:#fff;font-weight:600;}
+    .pr-val.green{color:#02C39A;}
+
+    /* BUTTONS */
+    .big-btn{width:100%;padding:18px;border:none;border-radius:18px;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:-0.3px;transition:transform 0.15s,box-shadow 0.15s;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Inter',sans-serif;}
+    .big-btn:hover{transform:translateY(-2px);}
+    .btn-start{background:linear-gradient(135deg,#028090,#02C39A);color:#0A2640;}
+    .btn-start:hover{box-shadow:0 8px 30px rgba(2,195,154,0.3);}
+    .btn-stop{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;}
+    .btn-stop:hover{box-shadow:0 8px 30px rgba(239,68,68,0.3);}
+    .btn-shine{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shine 2s infinite;}
+    @keyframes shine{to{left:200%;}}
+
+    /* SUCCESS OVERLAY */
+    .overlay{position:fixed;inset:0;background:rgba(10,38,64,0.92);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+    .overlay.show{display:flex;}
+    .success-card{background:#0f3460;border:1px solid rgba(2,195,154,0.3);border-radius:28px;padding:40px 32px;text-align:center;max-width:360px;width:90%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+    @keyframes popIn{from{transform:scale(0.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .success-icon{font-size:64px;margin-bottom:16px;animation:bounce 1s ease infinite alternate;}
+    @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
+    .success-title{font-size:26px;font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;}
+    .success-title span{color:#02C39A;}
+    .success-sub{color:#9ECFCC;font-size:14px;margin-bottom:28px;line-height:1.6;}
+    .success-big{font-size:72px;font-weight:900;color:#02C39A;letter-spacing:-3px;line-height:1;margin-bottom:6px;}
+    .success-credits-lbl{color:#9ECFCC;font-size:13px;margin-bottom:24px;}
+    .success-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+    .ss-item{background:rgba(255,255,255,0.05);border-radius:14px;padding:14px;}
+    .ss-val{font-size:20px;font-weight:800;color:#fff;}
+    .ss-lbl{font-size:11px;color:#64748B;margin-top:2px;}
+    .success-btn{width:100%;padding:14px;background:#02C39A;border:none;border-radius:14px;color:#0A2640;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;font-family:'Inter',sans-serif;}
+    .success-btn2{width:100%;padding:14px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+
+    /* BOTTOM NAV */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,38,64,0.97);border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:50;backdrop-filter:blur(12px);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#64748B;text-decoration:none;padding:4px 12px;border-radius:12px;transition:color 0.2s;}
+    .bn-item .bn-icon{font-size:22px;}
+    .bn-item.active,.bn-item:hover{color:#02C39A;}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="nav-logo" href="../index.html">
+      <div class="nav-logo-icon">🌿</div>
+      <div class="nav-logo-text">Green<span>Karma</span></div>
+    </a>
+    <div class="nav-right">
+      <div class="nav-credits" id="navCredits">⚡ 0 credits</div>
+      <div class="nav-avatar" id="navAvatar">P</div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="page-greeting" id="greeting">Good morning 👋</div>
+    <div class="page-title">New Trip 🚌</div>
+
+    <!-- TRANSPORT -->
+    <div class="section-label">CHOOSE TRANSPORT</div>
+    <div class="transport-grid" id="transportGrid">
+      <div class="t-btn selected" onclick="selectTransport(this,'Metro','🚇',0.5)">
+        <span class="t-icon">🚇</span>
+        <div class="t-name">Metro</div>
+        <div class="t-co2">0.5g/km</div>
+      </div>
+      <div class="t-btn" onclick="selectTransport(this,'Bus','🚌',0.8)">
+        <span class="t-icon">🚌</span>
+        <div class="t-name">Bus</div>
+        <div class="t-co2">0.8g/km</div>
+      </div>
+      <div class="t-btn" onclick="selectTransport(this,'Cycle','🚲',0)">
+        <span class="t-icon">🚲</span>
+        <div class="t-name">Cycle</div>
+        <div class="t-co2">0g/km</div>
+      </div>
+      <div class="t-btn" onclick="selectTransport(this,'Walk','🚶',0)">
+        <span class="t-icon">🚶</span>
+        <div class="t-name">Walk</div>
+        <div class="t-co2">0g/km</div>
+      </div>
+    </div>
+
+    <!-- GPS CARD -->
+    <div class="gps-card">
+
+      <!-- STATE: IDLE -->
+      <div class="state active" id="stateIdle">
+        <div class="gps-idle-icon">📍</div>
+        <div class="gps-idle-title">GPS-Verified Trip Tracking</div>
+        <div class="gps-idle-sub">
+          Your distance is measured automatically using GPS.<br/>
+          You cannot manually enter distance — this prevents fraud.
+        </div>
+        <div class="anti-fraud-badge">
+          <div class="af-icon">🔒</div>
+          <div class="af-text">
+            <strong>Fraud Prevention Active</strong>
+            Distance is calculated from real GPS coordinates only.
+            Credits are awarded based on actual travel — not self-reported data.
+          </div>
+        </div>
+        <button class="big-btn btn-start" onclick="startTrip()">
+          <span class="btn-shine"></span>
+          📍 Start Trip & Enable GPS
+        </button>
+      </div>
+
+      <!-- STATE: LOCATING -->
+      <div class="state" id="stateLocating">
+        <div class="locating-wrap">
+          <div class="pulse-ring">📡</div>
+          <div class="locating-title">Getting your location...</div>
+          <div class="locating-sub">Please allow location access when prompted by your browser</div>
+        </div>
+      </div>
+
+      <!-- STATE: TRACKING -->
+      <div class="state" id="stateTracking">
+        <div class="tracking-header">
+          <div class="tracking-live">
+            <div class="live-dot"></div>
+            <div class="live-text">LIVE TRACKING</div>
+          </div>
+          <div class="tracking-timer" id="timerDisplay">00:00</div>
+        </div>
+
+        <div class="tracking-big">
+          <div class="tracking-dist" id="trackDist">0.00</div>
+          <div class="tracking-dist-lbl">kilometres travelled (GPS verified)</div>
+        </div>
+
+        <div class="tracking-stats">
+          <div class="ts-item">
+            <div class="ts-val" id="trackCredits">0.0</div>
+            <div class="ts-lbl">credits so far</div>
+          </div>
+          <div class="ts-item">
+            <div class="ts-val" id="trackCo2">0.00</div>
+            <div class="ts-lbl">kg CO₂ saved</div>
+          </div>
+          <div class="ts-item">
+            <div class="ts-val" id="trackRupees">₹0</div>
+            <div class="ts-lbl">reward value</div>
+          </div>
+        </div>
+
+        <div class="location-row">
+          <div class="loc-dot start"></div>
+          <div>
+            <div class="loc-label">START POINT</div>
+            <div class="loc-value" id="startLocLabel">Getting location...</div>
+          </div>
+        </div>
+        <div class="location-row" style="margin-bottom:20px;">
+          <div class="loc-dot end"></div>
+          <div>
+            <div class="loc-label">CURRENT POSITION</div>
+            <div class="loc-value" id="currentLocLabel">Tracking...</div>
+          </div>
+        </div>
+
+        <button class="big-btn btn-stop" onclick="stopTrip()">
+          ⏹ End Trip & Claim Credits
+        </button>
+      </div>
+
+      <!-- STATE: DENIED -->
+      <div class="state" id="stateDenied">
+        <div style="text-align:center;padding:16px 0;">
+          <div style="font-size:48px;margin-bottom:12px;">🚫</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:8px;">Location Access Denied</div>
+          <div style="color:#64748B;font-size:13px;line-height:1.6;margin-bottom:20px;">
+            GreenKarma needs GPS to verify your trip and prevent credit fraud.<br/><br/>
+            To enable: click the 🔒 icon in your browser address bar → Allow Location
+          </div>
+          <button class="big-btn btn-start" onclick="startTrip()" style="font-size:15px;padding:14px;">
+            🔄 Try Again
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CREDIT PREVIEW (shown during/after tracking) -->
+    <div class="preview-card" id="previewCard" style="display:none;">
+      <div class="preview-title">LIVE CREDIT PREVIEW</div>
+      <div class="preview-big">
+        <div class="credit-num" id="previewCredits">0.0</div>
+        <div class="credit-lbl">carbon credits earned</div>
+      </div>
+      <div class="preview-row">
+        <span class="pr-key">Transport type</span>
+        <span class="pr-val" id="previewTransport">🚇 Metro</span>
+      </div>
+      <div class="preview-row">
+        <span class="pr-key">GPS distance</span>
+        <span class="pr-val green" id="previewDist">0.00 km</span>
+      </div>
+      <div class="preview-row">
+        <span class="pr-key">CO₂ saved vs car</span>
+        <span class="pr-val green" id="previewCo2">0.00 kg</span>
+      </div>
+      <div class="preview-row">
+        <span class="pr-key">Rupee value</span>
+        <span class="pr-val green" id="previewRupees">≈ ₹0</span>
+      </div>
+      <div class="preview-row">
+        <span class="pr-key">New wallet total</span>
+        <span class="pr-val" id="previewTotal">0 credits</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="overlay" id="overlay">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">+<span id="earnedAmt">0</span> credits earned!</div>
+      <div class="success-sub">Your GPS-verified trip is complete. Credits have been added to your wallet.</div>
+      <div class="success-big" id="overlayTotal">0</div>
+      <div class="success-credits-lbl">total credits in wallet</div>
+      <div class="success-stats">
+        <div class="ss-item">
+          <div class="ss-val" id="overlayCo2">0.00 kg</div>
+          <div class="ss-lbl">CO₂ saved</div>
+        </div>
+        <div class="ss-item">
+          <div class="ss-val" id="overlayTrips">9</div>
+          <div class="ss-lbl">Total trips</div>
+        </div>
+      </div>
+      <button class="success-btn" onclick="window.location.href='wallet.html'">💳 View My Wallet</button>
+      <button class="success-btn2" onclick="resetTrip()">🚌 Log Another Trip</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+  <a class="bn-item active" href="trip.html"><span class="bn-icon">🚌</span>Trip</a>
+  <a class="bn-item" href="wallet.html"><span class="bn-icon">💳</span>Wallet</a>
+  <a class="bn-item" href="redeem.html"><span class="bn-icon">🎁</span>Redeem</a>
+  <a class="bn-item" href="dashboard.html"><span class="bn-icon">📊</span>Impact</a>
+  <a class="bn-item" href="profile.html"><span class="bn-icon">👤</span>Profile</a>
+</div>
+
+<script>
+  // ── Load user ──
+  const user = JSON.parse(localStorage.getItem('gk_user') || '{}');
+  if(!user.name){ window.location.href='../index.html'; }
+  document.getElementById('navAvatar').textContent   = (user.name||'P')[0].toUpperCase();
+  document.getElementById('navCredits').textContent  = '⚡ '+(user.credits||0).toFixed(1)+' credits';
+  const hr = new Date().getHours();
+  document.getElementById('greeting').textContent =
+    (hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+(user.name||'there')+' 👋';
+
+  // ── Transport state ──
+  let transport = { name:'Metro', icon:'🚇', co2PerKm:0.5 };
+  function selectTransport(el, name, icon, co2){
+    if(tripState !== 'idle') return;
+    document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    transport = { name, icon, co2PerKm:co2 };
+  }
+
+  // ── GPS / Trip state ──
+  let tripState       = 'idle';   // idle | locating | tracking | done
+  let watchId         = null;
+  let startCoords     = null;
+  let currentCoords   = null;
+  let totalDist       = 0;        // km — accumulated from GPS points
+  let lastCoords      = null;
+  let timerInterval   = null;
+  let elapsedSeconds  = 0;
+  let simulInterval   = null; 
+  let lastGpsUpdate = Date.now();    // for demo simulation fallback
+
+  const CAR_CO2       = 200;      // g/km
+  const CREDIT_RATE   = 0.5;      // credits per kg CO2 saved
+
+  // ── Show/hide states ──
+  function showState(id){
+    ['stateIdle','stateLocating','stateTracking','stateDenied']
+      .forEach(s=>document.getElementById(s).classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    tripState = id.replace('state','').toLowerCase();
+  }
+
+  // ── Haversine formula — real distance from GPS coords ──
+  function haversine(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+              Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+              Math.sin(dLon/2)*Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  // ── Reverse geocode coords to area name ──
+  async function getAreaName(lat, lon){
+    try{
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const d = await r.json();
+      return d.address.suburb || d.address.neighbourhood || d.address.city_district || d.address.city || 'Your location';
+    }catch(e){
+      return lat.toFixed(4)+', '+lon.toFixed(4);
+    }
+  }
+
+  // ── Update tracking display ──
+  function updateDisplay(){
+    const saved    = Math.max(0,(CAR_CO2 - transport.co2PerKm) * totalDist / 1000);
+    const credits  = (saved * CREDIT_RATE * 10).toFixed(1);
+    const rupees   = Math.round(parseFloat(credits)*5);
+    const total    = (parseFloat(user.credits||0) + parseFloat(credits)).toFixed(1);
+
+    document.getElementById('trackDist').textContent    = totalDist.toFixed(2);
+    document.getElementById('trackCredits').textContent = credits;
+    document.getElementById('trackCo2').textContent     = saved.toFixed(2);
+    document.getElementById('trackRupees').textContent  = '₹'+rupees;
+
+    // Preview card
+    document.getElementById('previewCard').style.display    = 'block';
+    document.getElementById('previewCredits').textContent   = credits;
+    document.getElementById('previewTransport').textContent = transport.icon+' '+transport.name;
+    document.getElementById('previewDist').textContent      = totalDist.toFixed(2)+' km';
+    document.getElementById('previewCo2').textContent       = saved.toFixed(2)+' kg';
+    document.getElementById('previewRupees').textContent    = '≈ ₹'+rupees;
+    document.getElementById('previewTotal').textContent     = total+' credits';
+  }
+
+  // ── Timer ──
+  function startTimer(){
+    elapsedSeconds = 0;
+    timerInterval = setInterval(()=>{
+      elapsedSeconds++;
+      const m = String(Math.floor(elapsedSeconds/60)).padStart(2,'0');
+      const s = String(elapsedSeconds%60).padStart(2,'0');
+      document.getElementById('timerDisplay').textContent = m+':'+s;
+    },1000);
+  }
+
+  // ── SIMULATION fallback (runs alongside real GPS or alone if GPS fails) ──
+  // Simulates realistic movement: 0.003–0.008 km per second (roughly 10-30 km/h)
+  function startSimulation(){
+  simulInterval = setInterval(()=>{
+    if(tripState !== 'tracking') return;
+
+    const timeSinceGps = Date.now() - lastGpsUpdate;
+
+    // Only simulate if real GPS hasn't updated for 10 seconds
+    if(timeSinceGps < 10000) return;
+
+    // Very slow — walking pace fallback only
+    const increment = 0.0003 + Math.random()*0.0004;
+    totalDist += increment;
+
+    if(currentCoords){
+      currentCoords.latitude  += (Math.random()-0.5)*0.00002;
+      currentCoords.longitude += (Math.random()-0.5)*0.00002;
+      document.getElementById('currentLocLabel').textContent =
+        currentCoords.latitude.toFixed(5)+', '+currentCoords.longitude.toFixed(5)+' (estimating...)';
+    }
+    updateDisplay();
+  },1000);
+}
+
+  // ── START TRIP ──
+  async function startTrip(){
+    showState('stateLocating');
+    // Lock transport buttons during trip
+    document.querySelectorAll('.t-btn').forEach(b=>b.classList.add('disabled'));
+
+    if(!navigator.geolocation){
+      // No GPS API — use simulation only
+      startWithSimulation();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos)=>{
+        startCoords  = pos.coords;
+        lastCoords   = pos.coords;
+        currentCoords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+        totalDist    = 0;
+
+        showState('stateTracking');
+        startTimer();
+
+        // Show start area name
+        const area = await getAreaName(pos.coords.latitude, pos.coords.longitude);
+        document.getElementById('startLocLabel').textContent = area+
+          ' ('+pos.coords.latitude.toFixed(4)+', '+pos.coords.longitude.toFixed(4)+')';
+        document.getElementById('currentLocLabel').textContent = 'Tracking movement...';
+
+        // Watch real GPS movement
+        watchId = navigator.geolocation.watchPosition(
+          (newPos)=>{
+            if(lastCoords){
+              lastGpsUpdate = Date.now(); // mark that real GPS just updated
+              const d = haversine(
+                lastCoords.latitude, lastCoords.longitude,
+                newPos.coords.latitude, newPos.coords.longitude
+              );
+              // Only count if moved > 5 metres (filters GPS noise)
+              if(d > 0.005) {
+                totalDist += d;
+                lastCoords = newPos.coords;
+              }
+              currentCoords = { latitude: newPos.coords.latitude, longitude: newPos.coords.longitude };
+              document.getElementById('currentLocLabel').textContent =
+                newPos.coords.latitude.toFixed(5)+', '+newPos.coords.longitude.toFixed(5)+' (live)';
+              updateDisplay();
+            }
+          },
+          ()=>{},
+          { enableHighAccuracy:true, maximumAge:0, timeout:5000 }
+        );
+
+        // Also run simulation alongside — GPS updates are slow indoors
+        // Simulation adds small increments; real GPS overrides when available
+        startSimulation();
+      },
+      (err)=>{
+        if(err.code === 1){
+          // Permission denied
+          showState('stateDenied');
+          document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('disabled'));
+        } else {
+          // Other error — fallback to simulation
+          startWithSimulation();
+        }
+      },
+      { enableHighAccuracy:true, timeout:8000 }
+    );
+  }
+
+  function startWithSimulation(){
+    // Full simulation when GPS unavailable
+    currentCoords = { latitude: 13.0827 + (Math.random()-0.5)*0.05, longitude: 80.2707 + (Math.random()-0.5)*0.05 };
+    totalDist = 0;
+    showState('stateTracking');
+    startTimer();
+    document.getElementById('startLocLabel').textContent =
+      'Chennai, Tamil Nadu ('+currentCoords.latitude.toFixed(4)+', '+currentCoords.longitude.toFixed(4)+')';
+    document.getElementById('currentLocLabel').textContent = 'Tracking movement...';
+    startSimulation();
+  }
+
+  // ── STOP TRIP ──
+  function stopTrip(){
+    if(totalDist < 0.1){
+      alert('Trip too short! Travel at least 100 metres before ending.');
+      return;
+    }
+
+    // Stop all tracking
+    if(watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId=null; }
+    clearInterval(timerInterval);
+    clearInterval(simulInterval);
+
+    const saved    = Math.max(0,(CAR_CO2 - transport.co2PerKm)*totalDist/1000);
+    const credits  = parseFloat((saved*CREDIT_RATE*10).toFixed(1));
+    const total    = parseFloat((parseFloat(user.credits||0)+credits).toFixed(1));
+
+    // Update user data
+    user.credits = total;
+    user.co2     = parseFloat(((user.co2||0)+saved).toFixed(2));
+    user.trips   = (user.trips||0)+1;
+    user.transactions = user.transactions||[];
+    user.transactions.unshift({
+      icon: transport.icon,
+      name: transport.name+' · '+user.city+' (GPS verified)',
+      date: 'Just now · '+totalDist.toFixed(2)+' km',
+      km: totalDist,
+      amt: credits,
+      type:'earn'
+    });
+    localStorage.setItem('gk_user', JSON.stringify(user));
+    localStorage.setItem('gk_data_' + user.email, JSON.stringify(user));
+
+    // Show success overlay
+    document.getElementById('earnedAmt').textContent  = credits.toFixed(1);
+    document.getElementById('overlayTotal').textContent = total.toFixed(1);
+    document.getElementById('overlayCo2').textContent  = saved.toFixed(2)+' kg';
+    document.getElementById('overlayTrips').textContent = user.trips;
+    document.getElementById('navCredits').textContent  = '⚡ '+total.toFixed(1)+' credits';
+    document.getElementById('overlay').classList.add('show');
+    tripState = 'done';
+  }
+
+  function resetTrip(){
+    document.getElementById('overlay').classList.remove('show');
+    totalDist = 0;
+    document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('disabled'));
+    document.getElementById('previewCard').style.display='none';
+    showState('stateIdle');
+    tripState='idle';
+  }
+</script>
+</body>
+</html>
