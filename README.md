@@ -102,7 +102,7 @@ GreenKarma/
 ## 🚀 Getting Started
 
 ### Option 1 — Live Demo
-👉 **[https://github.com/pari767/GreenKarma](https://github.com/pari767/GreenKarma)**
+👉 **[https://pari767.github.io/GreenKarma/](https://pari767.github.io/GreenKarma/)**
 
 ### Option 2 — Run Locally
 ```bash
@@ -176,6 +176,6 @@ MIT License — feel free to fork and build on this!
 
 **🌿 Every green commute counts. Start earning today.**
 
-[Live Demo](https://github.com/pari767/GreenKarma) · [Report Bug](https://github.com/pari767/GreenKarma/issues) · [Request Feature](https://github.com/pari767/GreenKarma/issues)
+[Live Demo](https://pari767.github.io/GreenKarma/) · [Report Bug](https://github.com/pari767/GreenKarma/issues) · [Request Feature](https://github.com/pari767/GreenKarma/issues)
 
 </div>
