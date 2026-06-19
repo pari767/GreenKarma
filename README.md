@@ -8,19 +8,6 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
 ---
-## Live Demo
-[https://pari767.github.io/GreenKarma/](https://pari767.github.io/GreenKarma/)
-
-## Demo Video
-[https://drive.google.com/drive/folders/1fp6OJn9hByB_u2QdX8i8dRtUJSHEPZTz?usp=sharing](https://drive.google.com/drive/folders/1fp6OJn9hByB_u2QdX8i8dRtUJSHEPZTz?usp=sharing)
-
-## Presentation Deck
-[https://www.pdffiller.com/s/IgwlnzDzOc](https://www.pdffiller.com/s/IgwlnzDzOc)
-
-## GitHub Repository
-[https://github.com/pari767/GreenKarma](https://github.com/pari767/GreenKarma)
-
----
 
 ## 🚨 The Problem
 
