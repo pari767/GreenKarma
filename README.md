@@ -1,6 +1,6 @@
 # 🌿 GreenKarma — Commute Green. Earn Real Rewards.
 
-> **Hackathon Project** · Built to solve India's urban carbon emission problem through behavioral incentives.
+> Built to solve India's urban carbon emission problem through behavioral incentives.
 
 ![GreenKarma](https://img.shields.io/badge/GreenKarma-Eco%20Credits-02C39A?style=for-the-badge&logo=leaf)
 ![HTML](https://img.shields.io/badge/HTML5-Pure%20Frontend-E34F26?style=for-the-badge&logo=html5)
